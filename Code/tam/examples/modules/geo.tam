@@ -1,5 +1,0 @@
-use util.math
-
-pub struct Point { x: i32, y: i32 }
-
-pub fn sum(p: &Point) i32 { math::add(p.x, p.y) }

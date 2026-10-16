@@ -1,8 +1,0 @@
-fn half(x: f64) f64 { x / 2.0 }
-
-fn main() i32 {
-    let small: u8 = 200
-    let big: i64 = 3000000000
-    let f = half(9.0)
-    (small as i32) - 190 + (big / 1000000000) as i32 + f as i32
-}

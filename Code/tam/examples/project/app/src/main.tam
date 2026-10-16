@@ -1,3 +1,0 @@
-use core
-use fmt
-fn main() i32 { fmt::twice(core::base()) }

@@ -1,9 +1,0 @@
-[package]
-name = "app"
-version = { workspace = true }
-license = { workspace = true }
-description = "워크스페이스 예제"
-
-[dependencies]
-core = { workspace = true }
-fmt = { path = "../libs/fmt" }

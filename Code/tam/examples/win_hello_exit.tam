@@ -1,5 +1,0 @@
-// tamc build examples/win_hello_exit.tam --target windows
-fn main() i32 {
-    let name = string_from("tam")
-    name.len as i32 + 39
-}

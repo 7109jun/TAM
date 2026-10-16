@@ -1,0 +1,50 @@
+// tam.os (UEFI) — 콘솔(ConOut)이 표준 출력이다. 공개 API는 print/println/print_int/exit.
+use tam.fmt
+
+// ConOut->OutputString에 UTF-16으로 넘긴다. ASCII만 지원하고 `\n`은 `\r\n`으로 바꾼다.
+pub fn print(s: str) {
+    unsafe {
+        let st = efi_system_table()
+        let conout = *((st + 64) as *mut u64)
+        let cp = conout as *mut u64
+        let output_string = *(cp + 1)
+        let buf = alloc(s.len * 4 + 2) as *mut u16
+        mut n: u64 = 0
+        mut i: u64 = 0
+        while i < s.len {
+            let c = *(s.ptr + i)
+            if c == 10 {
+                *(buf + n) = 13
+                n = n + 1
+            }
+            if c < 128 {
+                *(buf + n) = c as u16
+            } else {
+                *(buf + n) = 63
+            }
+            n = n + 1
+            i = i + 1
+        }
+        *(buf + n) = 0
+        let r = ccall2(output_string as *const u8, conout, buf as u64)
+        free(buf as *mut u8)
+    }
+}
+
+pub fn println(s: str) {
+    print(s)
+    print("\n")
+}
+
+pub fn print_int(n: i64) {
+    let t = fmt::int_to_string(n)
+    print(as_str(&t))
+}
+
+// QEMU의 isa-debug-exit 장치(0xF4)에 코드를 쓰고 멈춘다. 실제 하드웨어에서는 그냥 멈춘다.
+pub fn exit(code: i32) {
+    unsafe {
+        port_out8(244, code as u8)
+        while true { halt() }
+    }
+}

@@ -1,0 +1,14 @@
+// UEFI 예제: 콘솔(ConOut)에 출력하고, 힙(AllocatePool)으로 만든 문자열을 직렬 포트에도 보낸다.
+use tam.os
+use tam.serial
+use tam.fmt
+
+fn main() i32 {
+    os::println("hello from TAM on UEFI")
+    let msg = fmt::concat("heap ", "works")
+    serial::println(as_str(&msg))
+    serial::print_int(12345)
+    serial::println("")
+    os::exit(9)
+    0
+}

@@ -1,0 +1,21 @@
+// BIOS 부팅 예제: 직렬 포트(COM1)로 인사하고, 합계를 계산해 종료 코드로 알린다.
+use tam.os
+
+fn sum(n: i32) i32 {
+    mut s = 0
+    mut i = 1
+    while i <= n {
+        s = s + i
+        i = i + 1
+    }
+    s
+}
+
+fn main() i32 {
+    os::println("hello from TAM on BIOS")
+    let name = string_from("heap works")
+    os::println(as_str(&name))
+    os::print_int(sum(10) as i64)
+    os::println("")
+    sum(10) - 55 + 7
+}

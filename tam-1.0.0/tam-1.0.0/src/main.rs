@@ -28,11 +28,11 @@ project commands (Tmake.toml):
 
 targets:
   host        (default off Windows) link with the system clang
-  windows     (default on Windows) x64 .exe without CRT/MSVC/SDK: needs llc and lld-link
+  windows     (default on Windows) x64 .exe without CRT/MSVC/SDK: needs llc (or clang) and lld-link
               next to tamc (or on PATH); tamc generates the kernel32 import library itself
-  uefi        x86-64 UEFI application (.efi, boot it as EFI/BOOT/BOOTX64.EFI); needs llc and lld-link
-  bios        x86-64 BIOS boot disk image (.img): boot sector + program, no OS; needs llc and lld-link
-  aarch64     AArch64 bare-metal Linux `Image` (.bin) for QEMU `virt -kernel`; needs llc and lld-link";
+  uefi        x86-64 UEFI application (.efi, boot it as EFI/BOOT/BOOTX64.EFI); needs llc (or clang) and lld-link
+  bios        x86-64 BIOS boot disk image (.img): boot sector + program, no OS; needs llc (or clang) and lld-link
+  aarch64     AArch64 bare-metal Linux `Image` (.bin) for QEMU `virt -kernel`; needs llc (or clang) and lld-link";
 
 /// 소스(와 `use`한 모듈들)를 읽어 LLVM IR 텍스트까지 만든다. 오류는 진단을 출력하고 종료한다.
 fn compile(path: &Path, target: Target) -> (String, BTreeMap<String, BTreeSet<String>>) {

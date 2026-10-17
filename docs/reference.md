@@ -3,7 +3,7 @@
 이 문서는 TAM 언어의 **규범적 정의**다. 문법, 타입, 평가 규칙, 소유권과 빌림 규칙, 오류와 trap의 동작을 빠짐없이 적는다. 언어를 처음 배운다면 [The TAM Book](book/README.md)을, 예제로 익히려면 [TAM by Example](by-example/README.md)을 먼저 보라.
 
 - 대상 버전: `tamc 1.0`
-- 이 문서의 모든 `tam` 코드 블록은 개발 중 검증 도구가 실제로 컴파일하고 실행해 검증한다(출력과 종료 코드 포함). 블록 아래의 `// exit:`, `// out:`, `// error:` 주석이 그 기대값이다.
+- 이 문서의 모든 `tam` 코드 블록은 `tools/doccheck.py`가 실제로 컴파일하고 실행해 검증한다(출력과 종료 코드 포함). 블록 아래의 `// exit:`, `// out:`, `// error:` 주석이 그 기대값이다.
 - "구현이 보장한다"고 적은 동작은 테스트로 고정되어 있다. "정해지지 않았다"고 적은 것은 바뀔 수 있으니 기대지 말 것.
 
 ## 목차
@@ -1351,7 +1351,7 @@ fn main() i32 { none().unwrap() }
 | 대상 | 산출물 | 비고 |
 |---|---|---|
 | `host` | 네이티브 실행 파일 | Windows 외 기본값. 시스템 `clang`으로 링크한다 |
-| `windows` | x64 `.exe` | Windows 기본값. CRT, MSVC, Windows SDK 없이 `kernel32`만 쓴다. `llc`와 `lld-link`가 필요 |
+| `windows` | x64 `.exe` | Windows 기본값. CRT, MSVC, Windows SDK 없이 `kernel32`만 쓴다. `llc`(없으면 `clang`)와 `lld-link`가 필요 |
 | `uefi` | x86-64 `.efi` | `EFI/BOOT/BOOTX64.EFI`로 부팅 |
 | `bios` | x86-64 부팅 디스크 `.img` | 부트 섹터 + 프로그램. 페이로드 최대 384KiB |
 | `aarch64` | AArch64 `Image` `.bin` | QEMU `virt -kernel`용. EL1, MMU 꺼짐 |

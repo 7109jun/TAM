@@ -15,7 +15,7 @@ $ tamc build main.tam --target windows -o hello.exe
 $ tamc build --target bios            # 프로젝트 모드
 ```
 
-`windows`, `uefi`, `bios`, `aarch64`는 `llc`와 `lld-link`가 필요하다(`tamc` 옆이나 `PATH`).
+`windows`, `uefi`, `bios`, `aarch64`는 `llc`(없으면 `clang`)와 `lld-link`가 필요하다(`tamc` 옆이나 `PATH`). 공식 Windows LLVM 배포본에는 `llc.exe`가 없으므로 `clang.exe`를 쓴다.
 
 ## 11.1 같은 코드, 같은 결과
 

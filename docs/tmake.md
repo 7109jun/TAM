@@ -4,7 +4,7 @@
 
 - 문법은 **표준 TOML(v1.0)** 그대로다. 독자 문법은 없다.
 - 대상 버전: `tamc 1.0`
-- 이 문서의 `toml,manifest` 블록과 `project` 묶음은 개발 중 검증 도구가 실제 `tamc`로 검증한다.
+- 이 문서의 `toml,manifest` 블록과 `project` 묶음은 `tools/doccheck.py`가 실제 `tamc`로 검증한다.
 
 ## 목차
 
@@ -645,10 +645,10 @@ members = ["a*b"]   # expect-error: only a trailing `/*` glob is supported in `m
 | 대상 | 산출물 | 필요한 도구 |
 |---|---|---|
 | `host` | 확장자 없는 실행 파일 | 시스템 `clang` |
-| `windows` | `.exe` | `llc`, `lld-link`(tamc와 같은 폴더 또는 PATH) |
-| `uefi` | `.efi` | `llc`, `lld-link` |
-| `bios` | `.img` | `llc`, `lld-link` |
-| `aarch64` | `.bin` | `llc`, `lld-link` |
+| `windows` | `.exe` | `llc`(또는 `clang`), `lld-link`(tamc와 같은 폴더 또는 PATH) |
+| `uefi` | `.efi` | `llc`(또는 `clang`), `lld-link` |
+| `bios` | `.img` | `llc`(또는 `clang`), `lld-link` |
+| `aarch64` | `.bin` | `llc`(또는 `clang`), `lld-link` |
 
 `check`는 도구가 없어도 모든 대상에서 동작한다(타입, 소유권, 빌림만 검사한다). `run`은 `host`(또는 Windows 호스트에서 `windows`)만 지원한다. 펌웨어 대상은 `build`로 만들어 QEMU 등으로 부팅한다.
 

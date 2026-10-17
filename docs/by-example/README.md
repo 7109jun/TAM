@@ -1,6 +1,6 @@
 # TAM by Example
 
-짧고 **실제로 실행되는** 예제 모음이다. 각 예제는 한 가지 개념을 보여 주고, 모든 코드는 컴파일·실행으로 검증된다(릴리스 전 검증). 설명이 더 필요하면 [The TAM Book](../book/README.md)이나 [The TAM Reference](../reference.md)로 간다.
+짧고 **실제로 실행되는** 예제 모음이다. 각 예제는 한 가지 개념을 보여 주고, 모든 코드는 컴파일·실행으로 검증된다(`tools/doccheck.py`). 설명이 더 필요하면 [The TAM Book](../book/README.md)이나 [The TAM Reference](../reference.md)로 간다.
 
 예제의 `// exit: N`은 프로그램이 돌려주는 종료 코드, `// out:`은 출력이다. 실행은 `tamc run 파일.tam`.
 

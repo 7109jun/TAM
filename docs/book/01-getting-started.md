@@ -27,9 +27,9 @@ tamc 1.0.0
 | 만들려는 것 | 필요한 도구 |
 |---|---|
 | 호스트(Linux) 실행 파일 | `clang` (PATH에 있어야 한다) |
-| Windows `.exe`, UEFI, BIOS, AArch64 이미지 | `llc`, `lld-link` (`tamc`와 **같은 폴더**에 두거나 PATH에 둔다) |
+| Windows `.exe`, UEFI, BIOS, AArch64 이미지 | `llc` 또는 `clang`, 그리고 `lld-link` (`tamc`와 **같은 폴더**에 두거나 PATH에 둔다) |
 
-Windows에서는 설치 폴더에 `tamc.exe`, `llc.exe`, `lld-link.exe` 세 파일만 있으면 된다. CRT도, Visual Studio도, Windows SDK도 필요 없다. `tamc`가 `kernel32`의 import 라이브러리를 스스로 만들어 링크한다. (저장소의 `.github/workflows/windows.yml`가 `tamc.exe`를 만들어 준다.)
+Windows에서는 설치 폴더에 `tamc.exe`, `lld-link.exe`, 그리고 `clang.exe`(또는 `llc.exe`) 세 파일만 있으면 된다. CRT도, Visual Studio도, Windows SDK도 필요 없다. `tamc`가 `kernel32`의 import 라이브러리를 스스로 만들어 링크한다. (저장소의 `.github/workflows/windows.yml`가 `tamc.exe`를 만들어 준다.)
 
 `check` 명령(타입·소유권·빌림 검사만)은 어떤 외부 도구도 필요 없다.
 

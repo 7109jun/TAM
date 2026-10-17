@@ -136,6 +136,8 @@ entry:
 
 ## 6. 개발과 시험
 
+> 이 절의 `tests/`와 `tools/`는 개발용 폴더이며, 배포용 저장소에는 들어 있지 않을 수 있다.
+
 ```console
 $ cargo build --release        # tamc 빌드
 $ cargo test                   # 전체 테스트(아래)

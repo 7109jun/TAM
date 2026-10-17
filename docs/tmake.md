@@ -4,7 +4,7 @@
 
 - 문법은 **표준 TOML(v1.0)** 그대로다. 독자 문법은 없다.
 - 대상 버전: `tamc 1.0`
-- 이 문서의 `toml,manifest` 블록과 `project` 묶음은 `tools/doccheck.py`가 실제 `tamc`로 검증한다.
+- 이 문서의 `toml,manifest` 블록과 `project` 묶음은 개발 중 검증 도구가 실제 `tamc`로 검증한다.
 
 ## 목차
 

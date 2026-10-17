@@ -15,17 +15,10 @@
 
 ## 문서의 품질 보증
 
-문서 안의 코드는 **모두 실제로 실행해서 검증**한다.
+문서 안의 코드 예제는 릴리스 전에 모두 실제 `tamc 1.0`으로 컴파일·실행해 출력과 종료 코드를 검증했다. 표기는 다음과 같다.
 
-```console
-$ cargo build
-$ python3 tools/doccheck.py docs
-```
-
-- ` ```tam `: 컴파일하고 실행해 `// exit:`, `// out:`과 비교한다.
-- ` ```tam,error ` / ` ```tam,trap `: 지정한 컴파일 오류, 실행 중 trap을 확인한다.
-- ` ```tam,boot=bios|uefi|aarch64 `: QEMU에서 부팅해 직렬 출력과 종료 코드를 확인한다.
-- `<!-- project -->` 묶음: 여러 파일의 `Tmake.toml` 프로젝트를 만들어 빌드·실행한다.
-- ` ```toml,manifest `: `Tmake.toml` 검증.
+- ` ```tam `: 컴파일하고 실행. `// exit:`, `// out:`이 기대값.
+- ` ```tam,error ` / ` ```tam,trap `: 지정한 컴파일 오류, 실행 중 trap.
+- ` ```tam,boot=bios|uefi|aarch64 `: QEMU 부팅 예제.
 
 문서는 한국어로 쓰고 코드, 식별자, 컴파일러 메시지는 영어 그대로 둔다.

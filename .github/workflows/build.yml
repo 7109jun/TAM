@@ -31,20 +31,28 @@ jobs:
       - name: Build tamc.exe
         run: cargo build --release --locked --target x86_64-pc-windows-msvc
 
-      - name: Install LLVM (llc, lld-link)
+      - name: Locate LLVM (clang, lld-link)
         run: |
-          choco install llvm -y --no-progress
+          # 러너에 LLVM이 이미 있을 수 있다. 공식 Windows 배포본에는 llc.exe가 없으므로
+          # tamc는 llc가 없으면 clang -c로 .ll을 오브젝트로 만든다.
+          if (-not (Test-Path "C:\Program Files\LLVM\bin\clang.exe")) {
+            choco install llvm -y --no-progress
+          }
           $bin = "C:\Program Files\LLVM\bin"
-          if (-not (Test-Path "$bin\llc.exe")) { throw "llc.exe not found in $bin" }
-          if (-not (Test-Path "$bin\lld-link.exe")) { throw "lld-link.exe not found in $bin" }
+          Get-ChildItem $bin -Filter *.exe | Select-Object -First 80 Name
+          foreach ($t in "clang.exe", "lld-link.exe") {
+            if (-not (Test-Path "$bin\$t")) { throw "$t not found in $bin" }
+          }
+          & "$bin\clang.exe" --version
 
-      - name: Package (tamc.exe + llc.exe + lld-link.exe + docs)
+      - name: Package (tamc.exe + clang.exe + lld-link.exe + docs)
         run: |
           $bin = "C:\Program Files\LLVM\bin"
           New-Item -ItemType Directory -Force dist\tamc | Out-Null
           Copy-Item target\x86_64-pc-windows-msvc\release\tamc.exe dist\tamc\
-          Copy-Item "$bin\llc.exe" dist\tamc\
+          Copy-Item "$bin\clang.exe" dist\tamc\
           Copy-Item "$bin\lld-link.exe" dist\tamc\
+          if (Test-Path "$bin\llc.exe") { Copy-Item "$bin\llc.exe" dist\tamc\ }
           Copy-Item -Recurse examples dist\tamc\examples
           Copy-Item -Recurse docs dist\tamc\docs
           Copy-Item README.md dist\tamc\

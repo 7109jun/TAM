@@ -54,7 +54,9 @@ jobs:
           Copy-Item "$bin\lld-link.exe" dist\tamc\
           if (Test-Path "$bin\llc.exe") { Copy-Item "$bin\llc.exe" dist\tamc\ }
           Copy-Item -Recurse examples dist\tamc\examples
-          Copy-Item -Recurse docs dist\tamc\docs
+          # 문서는 소스 폴더에 있거나(tam-1.0.0/tam-1.0.0/docs) 저장소 루트(docs)에 있다.
+          if (Test-Path docs) { Copy-Item -Recurse docs dist\tamc\docs }
+          elseif (Test-Path "$env:GITHUB_WORKSPACE\docs") { Copy-Item -Recurse "$env:GITHUB_WORKSPACE\docs" dist\tamc\docs }
           Copy-Item README.md dist\tamc\
           Get-ChildItem dist\tamc
 

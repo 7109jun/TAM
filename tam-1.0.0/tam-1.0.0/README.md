@@ -4,7 +4,7 @@ TAM 언어 컴파일러 `tamc`(Rust, LLVM 백엔드). 문서는 `docs/`(한국�
 
 ## 소스에서 빌드
 
-필요: Rust, `clang`, `llc`(LLVM), `lld`(Windows/펌웨어 대상용 `lld-link`).
+필요: Rust, `clang`(LLVM), `lld`(Windows/펌웨어 대상용 `lld-link`). `llc`가 있으면 그것을, 없으면(Windows 공식 LLVM 배포본) `clang -c`를 오브젝트 생성에 쓴다. `TAMC_BACKEND=clang`이면 `clang`을 강제한다.
 
 ```console
 $ cargo build --release

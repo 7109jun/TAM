@@ -119,6 +119,39 @@ fn tool(name: &str) -> PathBuf {
     PathBuf::from(file)
 }
 
+/// 백엔드 도구가 번들이나 PATH에 있는가.
+fn have_tool(name: &str) -> bool {
+    let p = tool(name);
+    if p.components().count() > 1 {
+        return true;
+    }
+    std::env::var_os("PATH")
+        .map(|paths| std::env::split_paths(&paths).any(|d| d.join(&p).is_file()))
+        .unwrap_or(false)
+}
+
+/// .ll을 대상 triple의 오브젝트 파일로 만든다. 기본은 `llc`다. `llc`가 없는 LLVM 배포본
+/// (Windows 공식 설치본)에서는 같은 일을 하는 `clang -c`로 대신한다(`TAMC_BACKEND=clang`이면 강제).
+fn compile_object(triple: &str, strict_align: bool, ll: &Path, obj: &Path) {
+    let use_clang = std::env::var("TAMC_BACKEND").map(|v| v == "clang").unwrap_or(false) || !have_tool("llc");
+    let level = tamc::opt::level();
+    if use_clang && have_tool("clang") {
+        let mut c = Command::new(tool("clang"));
+        c.args(["-c", "-x", "ir", "-target", triple, &format!("-O{level}"), "-Wno-override-module", "-w", "-Xclang", "-disable-llvm-passes"]);
+        if strict_align {
+            c.arg("-mstrict-align");
+        }
+        run_tool(c.arg(ll).arg("-o").arg(obj), "clang");
+        return;
+    }
+    let mut c = Command::new(tool("llc"));
+    c.args(["-filetype=obj", &format!("-O{level}"), &format!("-mtriple={triple}")]);
+    if strict_align {
+        c.arg("-mattr=+strict-align");
+    }
+    run_tool(c.arg(ll).arg("-o").arg(obj), "llc");
+}
+
 fn run_tool(cmd: &mut Command, what: &str) {
     match cmd.output() {
         Ok(o) if o.status.success() => {}
@@ -140,14 +173,7 @@ fn run_tool(cmd: &mut Command, what: &str) {
 /// lld-link로 링크한다. CRT, MSVC, Windows SDK가 필요 없다.
 pub(crate) fn link_windows(ll: &Path, exe: &Path, imports: &BTreeMap<String, BTreeSet<String>>) {
     let obj = exe.with_extension("obj");
-    run_tool(
-        Command::new(tool("llc"))
-            .args(["-mtriple=x86_64-pc-windows-msvc", "-filetype=obj", &format!("-O{}", tamc::opt::level())])
-            .arg(ll)
-            .arg("-o")
-            .arg(&obj),
-        "llc",
-    );
+    compile_object("x86_64-pc-windows-msvc", false, ll, &obj);
     // DLL마다 import lib을 만든다. kernel32는 런타임이 쓰는 함수를 항상 포함한다.
     let mut dlls = imports.clone();
     dlls.entry("kernel32.dll".to_string())
@@ -183,13 +209,7 @@ pub(crate) fn link_windows(ll: &Path, exe: &Path, imports: &BTreeMap<String, BTr
 /// BIOS/AArch64는 PE를 평평한 메모리 이미지로 펼쳐 부팅 형식으로 감싼다.
 pub(crate) fn link_firmware(target: Target, ll: &Path, out: &Path) {
     let obj = out.with_extension("obj");
-    let mut llc = Command::new(tool("llc"));
-    llc.args(["-filetype=obj", &format!("-O{}", tamc::opt::level())]).arg(format!("-mtriple={}", target.triple().unwrap()));
-    if target == Target::Aarch64 {
-        // MMU가 꺼져 있으면 모든 메모리가 Device 속성이라 정렬되지 않은 접근이 fault다.
-        llc.arg("-mattr=+strict-align");
-    }
-    run_tool(llc.arg(ll).arg("-o").arg(&obj), "llc");
+    compile_object(target.triple().unwrap(), target == Target::Aarch64, ll, &obj);
     let pe = out.with_extension("pe.tmp");
     let mut out_arg = std::ffi::OsString::from("/out:");
     out_arg.push(if target == Target::Uefi { out } else { &pe });

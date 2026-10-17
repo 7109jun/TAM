@@ -1,0 +1,75 @@
+name: build
+
+# 저장소 구조: tam-1.0.0/tam-1.0.0/ 안에 소스(Cargo.toml, src, std, examples ...)가 있다.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  SRC: tam-1.0.0/tam-1.0.0
+
+jobs:
+  windows:
+    name: Windows x64
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: tam-1.0.0/tam-1.0.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ env.SRC }}
+
+      - name: Build tamc.exe
+        run: cargo build --release --locked --target x86_64-pc-windows-msvc
+
+      - name: Install LLVM (llc, lld-link)
+        run: |
+          choco install llvm -y --no-progress
+          $bin = "C:\Program Files\LLVM\bin"
+          if (-not (Test-Path "$bin\llc.exe")) { throw "llc.exe not found in $bin" }
+          if (-not (Test-Path "$bin\lld-link.exe")) { throw "lld-link.exe not found in $bin" }
+
+      - name: Package (tamc.exe + llc.exe + lld-link.exe + docs)
+        run: |
+          $bin = "C:\Program Files\LLVM\bin"
+          New-Item -ItemType Directory -Force dist\tamc | Out-Null
+          Copy-Item target\x86_64-pc-windows-msvc\release\tamc.exe dist\tamc\
+          Copy-Item "$bin\llc.exe" dist\tamc\
+          Copy-Item "$bin\lld-link.exe" dist\tamc\
+          Copy-Item -Recurse examples dist\tamc\examples
+          Copy-Item -Recurse docs dist\tamc\docs
+          Copy-Item README.md dist\tamc\
+          Get-ChildItem dist\tamc
+
+      - name: Smoke test with the packaged compiler only (no LLVM on PATH)
+        run: |
+          $env:PATH = "$env:SystemRoot\System32;$env:SystemRoot"
+          Push-Location dist\tamc
+          .\tamc.exe --version
+          .\tamc.exe build examples\win_hello_exit.tam --target windows -o hello.exe
+          if ($LASTEXITCODE -ne 0) { throw "tamc build failed" }
+          .\hello.exe
+          Write-Host "exit code: $LASTEXITCODE"
+          if ($LASTEXITCODE -ne 42) { throw "expected exit code 42" }
+          .\tamc.exe build examples\hello_os.tam --target windows -o hello_os.exe
+          if ($LASTEXITCODE -ne 0) { throw "tamc build (hello_os) failed" }
+          .\hello_os.exe
+          Pop-Location
+
+      - name: Zip
+        run: Compress-Archive -Path dist\tamc -DestinationPath tamc-1.0.0-windows-x64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tamc-1.0.0-windows-x64
+          path: ${{ env.SRC }}/tamc-1.0.0-windows-x64.zip
+          if-no-files-found: error

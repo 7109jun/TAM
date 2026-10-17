@@ -1,0 +1,4 @@
+[package]
+name = "fmt"
+version = { workspace = true }
+kind = "lib"

@@ -1,0 +1,31 @@
+// tam.serial (x86 펌웨어) — COM1(0x3F8) 직렬 포트로 글자를 내보낸다.
+use tam.fmt
+
+// 한 바이트를 쓴다. 송신 버퍼가 빌 때까지 기다린다.
+pub fn put(b: u8) {
+    unsafe {
+        mut spins: u32 = 0
+        while (port_in8(1021) & 32) == 0 && spins < 1000000 {
+            spins = spins + 1
+        }
+        port_out8(1016, b)
+    }
+}
+
+pub fn print(s: str) {
+    mut i: u64 = 0
+    while i < s.len {
+        put(unsafe { *(s.ptr + i) })
+        i = i + 1
+    }
+}
+
+pub fn println(s: str) {
+    print(s)
+    print("\n")
+}
+
+pub fn print_int(n: i64) {
+    let t = fmt::int_to_string(n)
+    print(as_str(&t))
+}

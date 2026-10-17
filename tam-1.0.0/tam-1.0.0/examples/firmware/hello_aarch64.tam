@@ -1,0 +1,18 @@
+// AArch64 베어메탈 예제(QEMU virt): PL011 UART로 출력하고 semihosting으로 종료 코드를 알린다.
+use tam.os
+
+fn fact(n: u64) u64 {
+    if n <= 1 { 1 } else { n * fact(n - 1) }
+}
+
+fn main() i32 {
+    os::println("hello from TAM on aarch64")
+    let s = string_from("heap works")
+    os::println(as_str(&s))
+    os::print_int(fact(10) as i64)
+    os::println("")
+    let x: f64 = 1.5
+    os::print_int((x * 4.0) as i64)
+    os::println("")
+    21
+}

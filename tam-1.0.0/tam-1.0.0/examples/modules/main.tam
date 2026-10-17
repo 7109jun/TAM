@@ -1,0 +1,10 @@
+use util.math
+use geo
+
+fn main() i32 {
+    let p = geo::Point { x: 3, y: 4 }
+    mut n = 35
+    let r = &mut n as *mut i32
+    unsafe { *r = *r + geo::sum(&p) }
+    math::add(n, 0)
+}

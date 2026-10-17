@@ -1,0 +1,31 @@
+// tam.os (AArch64 베어메탈, QEMU virt) — PL011 UART(0x09000000)가 표준 출력이다.
+use tam.fmt
+
+pub fn print(s: str) {
+    mut i: u64 = 0
+    while i < s.len {
+        unsafe { mmio_write8(150994944, *(s.ptr + i)) }
+        i = i + 1
+    }
+}
+
+pub fn println(s: str) {
+    print(s)
+    print("\n")
+}
+
+pub fn print_int(n: i64) {
+    let t = fmt::int_to_string(n)
+    print(as_str(&t))
+}
+
+// semihosting SYS_EXIT_EXTENDED로 종료한다. (QEMU `-semihosting` 필요)
+pub fn exit(code: i32) {
+    unsafe {
+        let blk = alloc(16) as *mut u64
+        *blk = 131110
+        *(blk + 1) = code as u64
+        let r = semihost(32, blk as u64)
+        while true { halt() }
+    }
+}

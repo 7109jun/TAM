@@ -1,0 +1,10 @@
+struct User { name: String, age: i32 }
+
+fn greet_len(u: &User) i32 { u.name.len as i32 + u.age }
+
+fn main() i32 {
+    mut name = string_from("lulu")
+    string_push(&mut name, 33)
+    let u = User { name: name, age: 20 }
+    greet_len(&u)
+}

@@ -1,0 +1,23 @@
+fn add(a: i32, b: i32) i32 { a + b }
+
+fn fact(n: i32) i32 {
+    mut r = 1
+    mut i = 2
+    while i <= n {
+        r = r * i
+        i = i + 1
+    }
+    r
+}
+
+fn abs(x: i32) i32 {
+    if x < 0 { -x } else { x }
+}
+
+fn main() i32 {
+    let x = 10
+    mut y = 20
+    y = y + x
+    let big = fact(5) > 100 && !(abs(-3) == 4)
+    if big { add(x, y) + 4 } else { 0 }
+}
